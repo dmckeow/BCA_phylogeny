@@ -1,0 +1,27 @@
+host: nextflow2.linux.crg.es
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job              count
+-------------  -------
+samtools_sort        1
+total                1
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 10:21:50 2024]
+localrule samtools_sort:
+    input: mapped_reads/A.bam
+    output: sorted_reads/A.bam
+    jobid: 2
+    reason: Missing output files: sorted_reads/A.bam
+    wildcards: sample=A
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 10:21:50 2024]
+Finished job 2.
+1 of 1 steps (100%) done
+Complete log: .snakemake/log/2024-10-11T102150.213637.snakemake.log

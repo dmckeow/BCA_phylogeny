@@ -1,0 +1,27 @@
+host: nextflow2.linux.crg.es
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job        count
+-------  -------
+bwa_map        1
+total          1
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 09:10:47 2024]
+localrule bwa_map:
+    input: data/genome.fa, data/samples/B.fastq
+    output: mapped_reads/B.bam
+    jobid: 1
+    reason: Missing output files: mapped_reads/B.bam
+    wildcards: sample=B
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 09:10:49 2024]
+Finished job 1.
+1 of 1 steps (100%) done
+Complete log: .snakemake/log/2024-10-11T091047.595974.snakemake.log

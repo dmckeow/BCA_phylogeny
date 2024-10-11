@@ -1,0 +1,38 @@
+host: nextflow2.linux.crg.es
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job        count
+-------  -------
+bwa_map        1
+total          1
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Oct  9 16:05:25 2024]
+localrule bwa_map:
+    input: data/genome.fa, data/samples/A.fastq
+    output: mapped_reads/A.bam
+    jobid: 0
+    reason: Missing output files: mapped_reads/A.bam
+    resources: tmpdir=/tmp
+
+[Wed Oct  9 16:05:25 2024]
+Error in rule bwa_map:
+    jobid: 0
+    input: data/genome.fa, data/samples/A.fastq
+    output: mapped_reads/A.bam
+    shell:
+        bwa mem data/genome.fa data/samples/A.fastq | samtools view -Sb - > mapped_reads/A.bam
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job bwa_map since they might be corrupted:
+mapped_reads/A.bam
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2024-10-09T160525.661562.snakemake.log
+WorkflowError:
+At least one job did not complete successfully.

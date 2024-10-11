@@ -1,0 +1,117 @@
+host: nextflow2.linux.crg.es
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job               count
+--------------  -------
+all                   1
+bcftools_call         1
+plot_quals            1
+samtools_index        2
+samtools_sort         2
+total                 7
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:03 2024]
+localrule samtools_sort:
+    input: mapped_reads/B.bam
+    output: sorted_reads/B.bam
+    jobid: 5
+    reason: Forced execution
+    wildcards: sample=B
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:03 2024]
+Finished job 5.
+1 of 7 steps (14%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:03 2024]
+localrule samtools_index:
+    input: sorted_reads/B.bam
+    output: sorted_reads/B.bam.bai
+    jobid: 8
+    reason: Input files updated by another job: sorted_reads/B.bam
+    wildcards: sample=B
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:03 2024]
+Finished job 8.
+2 of 7 steps (29%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:03 2024]
+localrule samtools_sort:
+    input: mapped_reads/A.bam
+    output: sorted_reads/A.bam
+    jobid: 3
+    reason: Forced execution
+    wildcards: sample=A
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:04 2024]
+Finished job 3.
+3 of 7 steps (43%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:04 2024]
+localrule samtools_index:
+    input: sorted_reads/A.bam
+    output: sorted_reads/A.bam.bai
+    jobid: 7
+    reason: Input files updated by another job: sorted_reads/A.bam
+    wildcards: sample=A
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:04 2024]
+Finished job 7.
+4 of 7 steps (57%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:04 2024]
+localrule bcftools_call:
+    input: data/genome.fa, sorted_reads/A.bam, sorted_reads/B.bam, sorted_reads/A.bam.bai, sorted_reads/B.bam.bai
+    output: calls/all.vcf
+    jobid: 2
+    reason: Input files updated by another job: sorted_reads/A.bam.bai, sorted_reads/B.bam.bai, sorted_reads/B.bam, sorted_reads/A.bam
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:04 2024]
+Finished job 2.
+5 of 7 steps (71%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:04 2024]
+localrule plot_quals:
+    input: calls/all.vcf
+    output: plots/quals.svg
+    jobid: 1
+    reason: Input files updated by another job: calls/all.vcf
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:09 2024]
+Finished job 1.
+6 of 7 steps (86%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:09 2024]
+localrule all:
+    input: plots/quals.svg
+    jobid: 0
+    reason: Input files updated by another job: plots/quals.svg
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:09 2024]
+Finished job 0.
+7 of 7 steps (100%) done
+Complete log: .snakemake/log/2024-10-11T140502.218085.snakemake.log

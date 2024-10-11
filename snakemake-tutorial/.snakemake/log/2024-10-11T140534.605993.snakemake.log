@@ -1,0 +1,86 @@
+host: nextflow2.linux.crg.es
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job               count
+--------------  -------
+all                   1
+bcftools_call         1
+plot_quals            1
+samtools_index        2
+total                 5
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:34 2024]
+localrule samtools_index:
+    input: sorted_reads/B.bam
+    output: sorted_reads/B.bam.bai
+    jobid: 8
+    reason: Forced execution
+    wildcards: sample=B
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:34 2024]
+Finished job 8.
+1 of 5 steps (20%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:34 2024]
+localrule samtools_index:
+    input: sorted_reads/A.bam
+    output: sorted_reads/A.bam.bai
+    jobid: 7
+    reason: Forced execution
+    wildcards: sample=A
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:35 2024]
+Finished job 7.
+2 of 5 steps (40%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:35 2024]
+localrule bcftools_call:
+    input: data/genome.fa, sorted_reads/A.bam, sorted_reads/B.bam, sorted_reads/A.bam.bai, sorted_reads/B.bam.bai
+    output: calls/all.vcf
+    jobid: 2
+    reason: Input files updated by another job: sorted_reads/B.bam.bai, sorted_reads/A.bam.bai
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:35 2024]
+Finished job 2.
+3 of 5 steps (60%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:35 2024]
+localrule plot_quals:
+    input: calls/all.vcf
+    output: plots/quals.svg
+    jobid: 1
+    reason: Input files updated by another job: calls/all.vcf
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:40 2024]
+Finished job 1.
+4 of 5 steps (80%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 11 14:05:40 2024]
+localrule all:
+    input: plots/quals.svg
+    jobid: 0
+    reason: Input files updated by another job: plots/quals.svg
+    resources: tmpdir=/tmp
+
+[Fri Oct 11 14:05:40 2024]
+Finished job 0.
+5 of 5 steps (100%) done
+Complete log: .snakemake/log/2024-10-11T140534.605993.snakemake.log
