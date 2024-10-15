@@ -19,7 +19,7 @@ rule bwa_map:
 		"logs/bwa_map/{sample}.log"
 	benchmark:
 		"benchmarks/{sample}.bwa_map.benchmark.txt"
-	threads: 8
+	#threads: 8
 	conda:
 	  "envs/snakemake_tutorial.yaml"
 	shell:
@@ -72,6 +72,10 @@ rule plot_quals:
 		"calls/all.vcf"
 	output:
 		"plots/quals.svg"
+	log:
+		"logs/bcftools_call/plot_quals.log"
+	conda:
+	  "envs/snakemake_tutorial.yaml"
 	script:
 		"scripts/plot-quals.py"
 
