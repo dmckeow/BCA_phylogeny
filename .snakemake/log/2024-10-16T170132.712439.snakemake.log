@@ -1,0 +1,54 @@
+host: login1
+Building DAG of jobs...
+Your conda installation is not configured to use strict channel priorities. This is however important for having robust and correct environments (for details, see https://conda-forge.org/docs/user/tipsandtricks.html). Please consider to configure strict priorities by executing 'conda config --set channel_priority strict'.
+Creating conda environment envs/s02_cluster.yaml...
+Downloading and installing remote packages.
+Environment for /users/asebe/dmckeown/projects/BCA_phylogeny/envs/s02_cluster.yaml created (location: .snakemake/conda/346ea9158d1b7bc0fdf31282c9b99efd_)
+SLURM run ID: a96d706b-f7f6-45c4-9ffc-f9aff5f37b20
+Using shell: /usr/bin/bash
+Provided remote nodes: 4
+Job stats:
+job            count
+-----------  -------
+all                1
+s02_cluster        1
+total              2
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Oct 16 17:02:35 2024]
+rule s02_cluster:
+    input: results_annotation/searches/myo.Myosin.domains.fasta
+    output: results_annotation/clusters/myo.Myosin.domains.fasta
+    log: logs/s02_cluster/test.log
+    jobid: 1
+    benchmark: benchmarks/s02_cluster/test.benchmark.txt
+    reason: Forced execution
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>, partition=genoa64, qos=vshort, threads=4, time=00-01:00:00, account=dmckeown
+
+
+		python helper/s02_cluster.py results_annotation/searches/myo.Myosin.domains.fasta results_annotation/clusters/myo.Myosin.domains.fasta 1.5
+		
+No SLURM account given, trying to guess.
+Guessed SLURM account: crg_lab_arnau_sebe
+No wall time information given. This might or might not work on your cluster. If not, specify the resource runtime in your rule or as a reasonable default via --default-resources.
+Job 1 has been submitted with SLURM jobid 1141081 (log: /users/asebe/dmckeown/projects/BCA_phylogeny/.snakemake/slurm_logs/rule_s02_cluster/1141081.log).
+Waiting at most 60 seconds for missing files.
+[Wed Oct 16 17:03:44 2024]
+Finished job 1.
+1 of 2 steps (50%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Oct 16 17:03:44 2024]
+localrule all:
+    input: results_annotation/clusters/myo.Myosin.domains.fasta
+    jobid: 0
+    reason: Forced execution
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=/tmp, partition=genoa64, qos=vshort, threads=4, time=00-01:00:00, account=dmckeown
+
+[Wed Oct 16 17:03:44 2024]
+Finished job 0.
+2 of 2 steps (100%) done
+Complete log: .snakemake/log/2024-10-16T170132.712439.snakemake.log

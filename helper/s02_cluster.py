@@ -6,10 +6,6 @@ import argparse
 import logging
 import yaml
 
-# Input: fasta file 
-# Output: cluster assignments 
-
-
 def cluster(fasta_file, output_file, inflation, ncpu = 5, max_target_seqs = 100, clean = True):
     if not os.path.exists(fasta_file):
         logging.error(f"{fasta_file} doesn't exist")
@@ -42,4 +38,14 @@ def cluster(fasta_file, output_file, inflation, ncpu = 5, max_target_seqs = 100,
         logging.info(cmd)
         subprocess.run(cmd, shell=True, check=True)
     logging.info(f"Clustering done: {output_file}")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Cluster sequences using DIAMOND and MCL.")
+    parser.add_argument("fasta", help="Input FASTA file")
+    parser.add_argument("outfile", help="Output file prefix")
+    parser.add_argument("inflation", type=float, help="Inflation parameter for MCL")
+    parser.add_argument("--ncpu", type=int, default=5, help="Number of CPU threads")
+    
+    args = parser.parse_args()
+    cluster(args.fasta, args.outfile, args.inflation, args.ncpu)
     

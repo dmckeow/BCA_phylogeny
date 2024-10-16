@@ -1,6 +1,10 @@
 
-#cluster:
-#  fasta: "data/sample.fasta"
+s02_cluster:
+  fasta_file: "results_annotation/searches/myo.Myosin.domains.fasta"
+  output_file: "results_annotation/clusters/myo.Myosin.domains.fasta"
+  inflation: 1.5
+  max_target_seqs: 100
+
 #
 #align:
 #  fasta: "data/sample.fasta"

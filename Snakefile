@@ -1,21 +1,23 @@
 configfile: "config.yaml"
 
-rule search:
+rule s02_cluster:
 	input:
-		fasta=config["search"]["fasta"],
-		gene_family_info=config["search"]["gene_family_info"]
+		fasta=config["s02_cluster"]["fasta_file"]
 	output:
-		"results/{prefix}.{gene_family}.domains.fasta"
+		clusters=config["s02_cluster"]["output_file"]
 	params:
-		gene_family_name=config["search"]["gene_family_name"]
+		inflation=config["s02_cluster"]["inflation"]
 	log:
-		"logs/search/test.log"
+		"logs/s02_cluster/test.log"
 	benchmark:
-		"benchmarks/search/test.benchmark.txt"
+		"benchmarks/s02_cluster/test.benchmark.txt"
 	conda:
-	  "envs/search.yaml"
+	  "envs/s02_cluster.yaml"
 	shell:
-		"python helper/s01_search.py -f {input.fasta} -g {input.gene_family_info} {params.gene_family_name}"
+		"""
+		python helper/s02_cluster.py {input.fasta} {output.clusters} {params.inflation}
+		"""
+
 
 
 

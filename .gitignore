@@ -1,2 +1,4 @@
 helper/__pycache__/*
 data/hmms/*
+results_annotation/*
+logs/*

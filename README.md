@@ -26,5 +26,6 @@ conda env create -f envs/search.yaml
 ```
 Search is used the same way as before (everything else will be moved into a snakemake pipeline):
 ```bash
+conda activate phylogeny_search
 python main.py search -f data/sample.fasta -g data/genefam.tsv Myosin # creates results_annotation/searches/myo.Myosin.domains.fasta
 ```

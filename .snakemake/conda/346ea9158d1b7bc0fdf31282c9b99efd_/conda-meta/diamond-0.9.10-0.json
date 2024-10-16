@@ -1,0 +1,43 @@
+{
+  "build": "0",
+  "build_number": 0,
+  "channel": "https://conda.anaconda.org/bioconda/linux-64",
+  "constrains": [],
+  "depends": [
+    "libgcc",
+    "zlib"
+  ],
+  "extracted_package_dir": "/users/asebe/dmckeown/miniconda3/pkgs/diamond-0.9.10-0",
+  "files": [
+    "bin/diamond"
+  ],
+  "fn": "diamond-0.9.10-0.tar.bz2",
+  "license": "BSD",
+  "link": {
+    "source": "/users/asebe/dmckeown/miniconda3/pkgs/diamond-0.9.10-0",
+    "type": 1
+  },
+  "md5": "ef2da2fbf74105fcbe5e44f4f01b9ec0",
+  "name": "diamond",
+  "package_tarball_full_path": "/users/asebe/dmckeown/miniconda3/pkgs/diamond-0.9.10-0.tar.bz2",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "bin/diamond",
+        "file_mode": "binary",
+        "path_type": "hardlink",
+        "prefix_placeholder": "/opt/conda/conda-bld/diamond_1502754051329/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+        "sha256": "2a471e97d1aa650c997b32706efd0ddbfb61871a04357abf981c33c3da79da54",
+        "sha256_in_prefix": "814c093f6e6387e960f567e6ad655c16db7dfabb9d9b037b6222980617bc9145",
+        "size_in_bytes": 1324379
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "diamond",
+  "sha256": "598a039ce9ba85a6cfb53d1bbf5184a7c428e75d16a691afd24d5b2412b5c070",
+  "size": 555372,
+  "subdir": "linux-64",
+  "url": "https://conda.anaconda.org/bioconda/linux-64/diamond-0.9.10-0.tar.bz2",
+  "version": "0.9.10"
+}
