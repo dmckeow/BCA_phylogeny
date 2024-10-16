@@ -18,3 +18,13 @@ python main.py align -f results_annotation/searches/myo.Myosin.domains.fasta -o 
 mkdir -p results_annotation/gene_trees
 python main.py phylogeny -f results_annotation/alignments/test.aln -o results_annotation/gene_trees/test -c 15
 ```
+# Dean new:
+## Search:
+To install everything for search:
+```bash
+conda env create -f envs/search.yaml
+```
+Search is used the same way as before (everything else will be moved into a snakemake pipeline):
+```bash
+python main.py search -f data/sample.fasta -g data/genefam.tsv Myosin # creates results_annotation/searches/myo.Myosin.domains.fasta
+```

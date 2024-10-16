@@ -1,0 +1,11 @@
+name: phylogeny_search
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - pyyaml
+  - hmmer
+  - bedtools
+  - samtools
