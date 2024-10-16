@@ -1,7 +1,7 @@
 samples:
     A: data/samples/A.fastq
     B: data/samples/B.fastq
-    C: data/samples/C.fastq
+    #C: data/samples/C.fastq
 
 # parameters: bcftools call
 mutation_rate: 1e-5
