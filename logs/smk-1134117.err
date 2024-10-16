@@ -1,0 +1,45 @@
+
+CondaError: Run 'conda init' before 'conda activate'
+
+Using profile profiles/slurm for setting default command line arguments.
+host: genoa64-06
+Building DAG of jobs...
+Your conda installation is not configured to use strict channel priorities. This is however important for having robust and correct environments (for details, see https://conda-forge.org/docs/user/tipsandtricks.html). Please consider to configure strict priorities by executing 'conda config --set channel_priority strict'.
+You are running snakemake in a SLURM job context. This is not recommended, as it may lead to unexpected behavior. Please run Snakemake directly on the login node.
+SLURM run ID: aaca43f9-c6f1-4d10-8f00-c769687aa748
+Using shell: /usr/bin/bash
+Provided remote nodes: 4
+Job stats:
+job               count
+--------------  -------
+all                   1
+bcftools_call         1
+bwa_map               2
+plot_quals            1
+samtools_index        2
+samtools_sort         2
+total                 9
+
+Select jobs to execute...
+Execute 2 jobs...
+
+[Wed Oct 16 11:56:56 2024]
+rule bwa_map:
+    input: data/genome.fa, data/samples/B.fastq
+    output: mapped_reads/B.bam
+    log: logs/bwa_map/B.log
+    jobid: 6
+    benchmark: benchmarks/B.bwa_map.benchmark.txt
+    reason: Forced execution
+    wildcards: sample=B
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>, partition=genoa64, qos=test, threads=4, time=01:00:00, account=dmckeown
+
+(bwa mem -R '@RG\tID:B\tSM:B' -t 1 data/genome.fa data/samples/B.fastq | samtools view -Sb - > mapped_reads/B.bam) 2> logs/bwa_map/B.log
+No SLURM account given, trying to guess.
+Unable to guess SLURM account. Trying to proceed without.
+WorkflowError:
+Failed to run sinfo for retrieval of cluster partitions: sinfo: error: resolve_ctls_from_dns_srv: res_nsearch error: Unknown host
+sinfo: error: fetch_config: DNS SRV lookup failed
+sinfo: error: _establish_config_source: failed to fetch config
+sinfo: fatal: Could not establish a configuration source
+
