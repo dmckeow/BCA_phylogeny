@@ -13,15 +13,15 @@ cluster-generic-submit-cmd:
 default-resources:
   - partition=genoa64
   - qos=vshort
-  - threads=4
-  - mem_mb=1000
+  - threads=6
+  - mem_mb=16000
   - time="00-01:00:00"
   - account=dmckeown
 restart-times: 3
 max-jobs-per-second: 10
 max-status-checks-per-second: 1
 local-cores: 1
-latency-wait: 60
+latency-wait: 600
 jobs: 4
 keep-going: True
 rerun-incomplete: True

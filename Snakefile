@@ -1,40 +1,42 @@
 configfile: "config.yaml"
 
-rule s02_cluster:
+def get_input_fastas(wildcards):
+	return config["samples"][wildcards.sample]
+
+rule all:
 	input:
-		fasta=config["s02_cluster"]["fasta_file"]
-	output:
-		clusters=config["s02_cluster"]["output_file"]
-	params:
-		inflation=config["s02_cluster"]["inflation"]
-	log:
-		"logs/s02_cluster/test.log"
-	benchmark:
-		"benchmarks/s02_cluster/test.benchmark.txt"
-	conda:
-	  "envs/s02_cluster.yaml"
-	shell:
-		"""
-		python helper/s02_cluster.py {input.fasta} {output.clusters} {params.inflation}
-		"""
+		expand("results_annotation/alignments/{sample}.aln", sample=config["samples"].keys()),
+		expand("results_annotation/alignments/{sample}.aln.clipkit", sample=config["samples"].keys())
 
 rule align:
 	input:
-		fasta=config["s02_cluster"]["fasta_file"]
+		get_input_fastas
 	output:
-		clusters=config["s02_cluster"]["output_file"]
+		"results_annotation/alignments/{sample}.aln"
 	params:
-		inflation=config["s02_cluster"]["inflation"]
-	log:
-		"logs/s02_cluster/test.log"
-	benchmark:
-		"benchmarks/s02_cluster/test.benchmark.txt"
+		tool_params=config["align"]["mafft_params"]
 	conda:
-	  "envs/s02_cluster.yaml"
+		"envs/align_phylogeny.yaml"
 	shell:
 		"""
-		python helper/s02_cluster.py {input.fasta} {output.clusters} {params.inflation}
+		mafft --reorder --thread {threads} {params.tool_params} {input} > {output}
 		"""
+
+rule trim:
+	input:
+		"results_annotation/alignments/{sample}.aln"
+	output:
+		"results_annotation/alignments/{sample}.aln.clipkit"
+	params:
+		tool_params=config["trim"]["clipkit_params"]
+	conda:
+		"envs/align_phylogeny.yaml"
+	shell:
+		"""
+		clipkit {input} {params.tool_params} -o {output}
+		"""
+
+
 
 
 
