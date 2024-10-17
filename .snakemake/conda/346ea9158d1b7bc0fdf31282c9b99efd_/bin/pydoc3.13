@@ -1,5 +1,0 @@
-#!/users/asebe/dmckeown/projects/BCA_phylogeny/.snakemake/conda/346ea9158d1b7bc0fdf31282c9b99efd_/bin/python3.13
-
-import pydoc
-if __name__ == '__main__':
-    pydoc.cli()
