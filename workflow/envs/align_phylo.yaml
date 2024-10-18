@@ -1,4 +1,4 @@
-name: align_phylogeny
+name: align_phylo
 channels:
   - bioconda
   - conda-forge

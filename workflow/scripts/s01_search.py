@@ -6,6 +6,43 @@ import argparse
 import logging
 import yaml
 
+# Ensure PyYAML is installed
+try:
+    import yaml
+except ImportError:
+    raise ImportError("PyYAML is not installed. Install it using 'pip install pyyaml'.")
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def load_config():
+    config_file = "config.yaml"
+    tool_directory = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(tool_directory, config_file)
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"Configuration file {config_path} not found.")
+    with open(config_path, 'r') as file:
+        config = yaml.safe_load(file)
+    return config
+
+
+def check(tool_name):
+    try:
+        # Try to run the tool with a harmless argument like --help
+        cmd = [tool_name, '--help']
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # If return code is 0, it means the tool executed successfully
+        if result.returncode == 0:
+            print(f"{tool_name} is available and can be launched.")
+        else:
+            print(f"Error: {tool_name} is not functioning properly.")
+            sys.exit(1)
+    except FileNotFoundError:
+        print(f"Error: {tool_name} is not available on your system.")
+        sys.exit(1)
+
+
+
 def activate_conda_environment(env_name):
     logging.info(f"Activating conda environment: {env_name}")
     subprocess.run(f"conda activate {env_name}", shell=True, check=True)
