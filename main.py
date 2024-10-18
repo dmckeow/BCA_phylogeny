@@ -48,14 +48,6 @@ def check(tool_name):
 #############################################################################################
 
 
-def run_easyphylo(fasta_file,ncpu):
-    logging.info(f"Easy-phylo: {fasta_file}")
-    quit()
-
-
-
-
-
 
 
 

@@ -19,6 +19,13 @@ mkdir -p results_annotation/gene_trees
 python main.py phylogeny -f results_annotation/alignments/test.aln -o results_annotation/gene_trees/test -c 15
 ```
 # Dean new:
+## Setup
+Clone this pipeline and Broccoli:
+```bash
+git clone https://github.com/dmckeow/BCA_phylogeny.git
+cd BCA_phylogeny
+git clone https://github.com/rderelle/Broccoli.git
+```
 ## Pre-pipeline steps (search, cluster - initial preparation of fastas which may or may not be inputs for main pipeline):
 To install:
 ```bash

@@ -1,0 +1,9 @@
+
+
+broccoli:
+  input_dir: "Broccoli/example_dataset"
+  broccoli_params: ""
+
+orthofinder:
+  input_dir: "Broccoli/example_dataset"
+  orthofinder_params: ""

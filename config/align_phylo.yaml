@@ -12,20 +12,3 @@ align:
 trim:
   clipkit_params: "-m kpic-gappy -g 0.7"
 
-#phylogeny:
- # fasta: "results/sample.tree.aln"  
-  #outprefix: "results/sample.tree"
-
-#
-#generax:
-#  tree: "results/sample.tree"
-#  fasta: "results/sample.tree.aln"
-#  outdir: "results/"
-#
-#possvm:
-#  treefile: "results/sample.tree"
-#  refnames: "reference_names.txt"
-#
-
-# SEARCH
-hmm_dir: data/hmms/

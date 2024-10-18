@@ -1,3 +1,4 @@
+name: initial_ortho
 channels:
   - bioconda
   - conda-forge
@@ -8,5 +9,4 @@ dependencies:
   - diamond
   - fasttree
   - ete3
-  - broccoli
   - sonicparanoid
