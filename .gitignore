@@ -3,4 +3,4 @@ data/hmms/*
 results_annotation/*
 logs/*
 .snakemake/*
-Broccoli/*
+resources/*

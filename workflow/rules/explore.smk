@@ -1,3 +1,4 @@
+
 configfile: "config/explore.yaml"
 
 rule all:
@@ -22,11 +23,11 @@ rule broccoli:
 		"""
 		rm -fr results_annotation/broccoli &&
 		mkdir -p results_annotation/broccoli &&
-		python Broccoli/broccoli.py -dir {input} -threads {threads} {params.tool_params} &&
+		python resources/Broccoli/broccoli.py -dir {input} -threads {threads} {params.tool_params} &&
 		mv dir_step1 results_annotation/broccoli &&
-        mv dir_step2 results_annotation/broccoli &&
-        mv dir_step3 results_annotation/broccoli &&
-        mv dir_step4 results_annotation/broccoli
+		mv dir_step2 results_annotation/broccoli &&
+		mv dir_step3 results_annotation/broccoli &&
+		mv dir_step4 results_annotation/broccoli
 		"""
 
 rule orthofinder:
