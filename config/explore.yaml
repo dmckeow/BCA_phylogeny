@@ -1,7 +1,12 @@
 broccoli:
-  input_dir: "Broccoli/example_dataset"
+  input_dir: "resources/Broccoli/example_dataset"
   broccoli_params: ""
 
 orthofinder:
-  input_dir: "Broccoli/example_dataset"
+  input_dir: "resources/Broccoli/example_dataset"
   orthofinder_params: ""
+
+search:
+  gene_family_info: data/genefam.tsv
+  gene_family_name: Myosin
+  hmm_dir: data/hmms
