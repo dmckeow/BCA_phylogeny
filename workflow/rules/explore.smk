@@ -48,14 +48,14 @@ checkpoint broccoli:
 		"""
 		rm -fr results_annotation/broccoli &&
 		mkdir -p results_annotation/broccoli &&
-		python resources/Broccoli/broccoli.py -dir {input} -threads {threads} {params.tool_params} &&
+		python Broccoli/broccoli.py -dir {input} -threads {threads} {params.tool_params} &&
 		mv dir_step1 results_annotation/broccoli &&
 		mv dir_step2 results_annotation/broccoli &&
 		mv dir_step3 results_annotation/broccoli &&
 		mv dir_step4 results_annotation/broccoli &&
 		python workflow/scripts/parse_fastas_broccoli.py \
 			-b results_annotation/broccoli/dir_step3/orthologous_groups.txt \
-			-f resources/Broccoli/example_dataset \
+			-f {input} \
 			-o results_annotation/broccoli/orthologous_groups_fastas
 		"""
 

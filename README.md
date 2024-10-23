@@ -22,9 +22,7 @@ python main.py phylogeny -f results_annotation/alignments/test.aln -o results_an
 ## Setup
 Clone this pipeline and Broccoli:
 ```bash
-git clone https://github.com/dmckeow/BCA_phylogeny.git
-cd BCA_phylogeny
-git clone https://github.com/rderelle/Broccoli.git
+git clone --recurse-submodules https://github.com/dmckeow/BCA_phylogeny.git
 ```
 ## Pre-pipeline steps (search, cluster - initial preparation of fastas which may or may not be inputs for main pipeline):
 To install:

@@ -1,6 +1,7 @@
 helper/__pycache__/*
 data/hmms/*
 results_annotation/*
+results/*
 logs/*
 .snakemake/*
 resources/*
