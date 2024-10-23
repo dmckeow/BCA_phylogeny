@@ -48,6 +48,7 @@ Specific configuration file for SLURM. You MUST edit this to have your correct r
 
 ```bash
 conda activate snakemake
-# on SLURM:
+# on SLURM on login node (main pipeline process runs on login, but everything else gets submitted to nodes):
 snakemake --profile profiles/slurm --executor slurm # use --forceall to overwrite previous outputs
+
  ```
