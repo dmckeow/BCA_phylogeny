@@ -144,6 +144,7 @@ def search(fasta_file, gene_family_info, gene_family_name, hmm_dir, threads):
 	threshold = gene_family["threshold"]
 
 	searches_dir = 'results_annotation/searches/'
+	searches_dir = os.path.join(searches_dir, f"{args.input_source}/")
 	os.makedirs(searches_dir, exist_ok=True)
 	
 	tmp_file = os.path.join(searches_dir, f"{prefix}.{gene_family_name}.domains.csv.tmp")
@@ -180,6 +181,7 @@ if __name__ == "__main__":
 	parser.add_argument('-g', '--gene_family_info', required=True, help='Path to the gene family info file specifying HMMs and parameters')
 	parser.add_argument('-H', '--hmm', required=True, help='Path to the directory containing hmm profiles against which the search will be performed')
 	parser.add_argument('-t', '--threads', required=True, help='Num cpus for hmmsearch')
+	parser.add_argument('-i', '--input_source', required=True, help='A meaningful name indicating where your input fastas came from - will be used as subdirectory name in results_annotations/searches')
 	parser.add_argument('gene_family_name', help='Name of the gene family to search')
 
 	args = parser.parse_args()
