@@ -1,12 +1,39 @@
+# WORKFLOW CONTROL
+  ## Rules indicated here will be run if TRUE (in double quotes), skipped if set to anything else
+
+workflow_control:
+  ## INITIAL ORTHOLOGY
+  broccoli: "TRUE"
+  orthofinder: "TRUE"
+
+  ## SEARCH
+  search: "TRUE"
+
+  ## CLUSTER
+  diamond_mcl: "TRUE"
+
+
+# INITAL ORTHOLOGY
+
+input_dir: "Broccoli/example_dataset" # path to directory (relative or absolute) containing protein fastas
+
 broccoli:
-  input_dir: "Broccoli/example_dataset"
-  broccoli_params: ""
+  broccoli_params: "-kmer_size 10000 -phylogenies ml" # you can put any commandline options for the tool here, as they are normally used, except those that are defined separately in this config file
 
 orthofinder:
-  input_dir: "Broccoli/example_dataset"
-  orthofinder_params: ""
+  orthofinder_params: "" # you can put any commandline options for the tool here, as they are normally used, except those that are defined separately in this config file
+
+# SEARCH
 
 search:
   gene_family_info: data/genefam.tsv
   gene_family_name: Myosin
   hmm_dir: data/hmms
+
+# CLUSTER
+
+cluster_diamond_mcl:
+  diamond_params: "--max-target-seqs 100 --more-sensitive --quiet" # you can put any commandline options for the tool here, as they are normally used, except those that are defined separately in this config file
+
+  mcl_params: "--abc" # you can put any commandline options for the tool here, as they are normally used, except those that are defined separately in this config file
+  mcl_inflation: "1.5"
