@@ -4,6 +4,7 @@ import glob
 configfile: "config/explore.yaml"
 
 # this version aggregates:
+
 #def get_fasta_files(wildcards):
 #	ckpt_output = checkpoints.orthofinder.get().output[0]  # Retrieve the checkpoint output
 #	fasta_files = glob_wildcards(os.path.join(ckpt_output, "{sample}.fa")).sample
