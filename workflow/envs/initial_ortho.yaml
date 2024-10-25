@@ -9,4 +9,4 @@ dependencies:
   - diamond
   - fasttree
   - ete3
-  - sonicparanoid
+  - biopython

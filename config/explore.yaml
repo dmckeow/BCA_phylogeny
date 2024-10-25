@@ -1,39 +1,46 @@
-# WORKFLOW CONTROL
-  ## Rules indicated here will be run if TRUE (in double quotes), skipped if set to anything else
+# GENERAL NOTES
+  # Passing parameters to tools:
+    # For options ending with <_params> you can put any commandline options for the tool here, as they are normally used, except those that are defined separately in this config file. If you do not wish to specify any parameters, then simply leave the option with "". If an option is defined separately here, then it is simply to require the user to specify input for that parameter.
 
-workflow_control:
-  ## INITIAL ORTHOLOGY
+# WORKFLOW CONTROL
+  # Rules indicated here will be run if TRUE (in double quotes), skipped if set to anything else
+
+ww_cl: # workflow_control
+  # INITIAL ORTHOLOGY
+    # You must enable at least ONE
   broccoli: "TRUE"
   orthofinder: "TRUE"
 
   ## SEARCH
-  search: "TRUE"
+    # You must enable at least ONE
+  search: "TRUE" # runs hmmsearch against gene families and hmm profiles specified by YOU in WORKFLOW PARAMETERS
+  downstream_all: "TRUE" # if TRUE then ALL orthogroups identified by INITIAL ORTHOLOGY will be subject to downstream analyses
 
   ## CLUSTER
   diamond_mcl: "TRUE"
 
-
-# INITAL ORTHOLOGY
+# WORKFLOW PARAMETERS
+  # INITAL ORTHOLOGY
 
 input_dir: "Broccoli/example_dataset" # path to directory (relative or absolute) containing protein fastas
 
 broccoli:
-  broccoli_params: "-kmer_size 10000 -phylogenies ml" # you can put any commandline options for the tool here, as they are normally used, except those that are defined separately in this config file
+  broccoli_params: "-kmer_size 10000 -phylogenies ml"
 
 orthofinder:
-  orthofinder_params: "" # you can put any commandline options for the tool here, as they are normally used, except those that are defined separately in this config file
+  orthofinder_params: ""
 
-# SEARCH
+  # SEARCH
 
 search:
   gene_family_info: data/genefam.tsv
   gene_family_name: Myosin
   hmm_dir: data/hmms
 
-# CLUSTER
+  # CLUSTER
 
 cluster_diamond_mcl:
-  diamond_params: "--max-target-seqs 100 --more-sensitive --quiet" # you can put any commandline options for the tool here, as they are normally used, except those that are defined separately in this config file
+  diamond_params: "--max-target-seqs 100 --more-sensitive --quiet"
 
-  mcl_params: "--abc" # you can put any commandline options for the tool here, as they are normally used, except those that are defined separately in this config file
+  mcl_params: "--abc"
   mcl_inflation: "1.5"

@@ -5,7 +5,7 @@ configfile: "config/explore.yaml"
 
 # Check for illegal config settings
 
-if config["workflow_control"]["broccoli"] != "TRUE" and config["workflow_control"]["orthofinder"] != "TRUE":
+if config["ww_cl"]["broccoli"] != "TRUE" and config["ww_cl"]["orthofinder"] != "TRUE":
 	print("Neither 'broccoli' nor 'orthofinder' is enabled in the workflow control. You must eat your vegetables or your orthofinder. Exiting.")
 	sys.exit(1)
 
@@ -27,6 +27,20 @@ def get_fasta_samples_broccoli():
 	fasta_files = glob_wildcards(os.path.join(ckpt_output, "{sample}.fa")).sample
 	return fasta_files
 
+def get_orthofinder_domains_files():
+	# Retrieve the actual output from the checkpoint
+	ckpt_output = checkpoints.search_orthofinder_ckpt.get().output[0]
+	# Extract all files with the specific naming pattern
+	domain_files = glob_wildcards(os.path.join(ckpt_output, "{unique_sample_name}.domains.fasta")).unique_sample_name
+	return domain_files
+
+def get_broccoli_domains_files():
+	# Retrieve the actual output from the checkpoint
+	ckpt_output = checkpoints.search_broccoli_ckpt.get().output[0]
+	# Extract all files with the specific naming pattern
+	domain_files = glob_wildcards(os.path.join(ckpt_output, "{unique_sample_name}.domains.fasta")).unique_sample_name
+	return domain_files
+
 # RULES BEGIN
 
 rule all:
@@ -34,20 +48,31 @@ rule all:
 		"results_annotation/broccoli/dir_step3/orthologous_groups.txt",
 		"results_annotation/broccoli/dir_step4/orthologous_pairs.txt",
 		"results_annotation/OrthoFinder/Orthogroup_Sequences",
-		"results_annotation/broccoli/orthologous_groups_fastas",
+		"results_annotation/broccoli/Orthogroup_Sequences",
 		#expand("results_annotation/OrthoFinder/test/{sample}.fa", sample=get_fasta_files) # to aggregate
 		expand("results_annotation/OrthoFinder/Orthogroup_Sequences/{sample}.txt", sample=lambda wildcards: get_fasta_samples_orthofinder()),
-		expand("results_annotation/broccoli/orthologous_groups_fastas/{sample}.txt", sample=lambda wildcards: get_fasta_samples_broccoli())
+		expand("results_annotation/broccoli/Orthogroup_Sequences/{sample}.txt", sample=lambda wildcards: get_fasta_samples_broccoli()),
+
+		# CLUSTER OUTPUTS:
+			# diamond mcl
+		expand("results_annotation/searches/OrthoFinder/{unique_sample_name}.domains.fasta", unique_sample_name=lambda wildcards: get_orthofinder_domains_files()),
+		expand("results_annotation/clusters/searches/OrthoFinder/dmnd_mcl/{unique_sample_name}.domains.dmnd.csv", unique_sample_name=lambda wildcards: get_orthofinder_domains_files()),
+		
+		expand("results_annotation/searches/broccoli/{unique_sample_name}.domains.fasta", unique_sample_name=lambda wildcards: get_broccoli_domains_files()),
+		expand("results_annotation/clusters/searches/broccoli/dmnd_mcl/{unique_sample_name}.domains.dmnd.csv", unique_sample_name=lambda wildcards: get_broccoli_domains_files()),
+
+		expand("results_annotation/clusters/all/OrthoFinder/dmnd_mcl/{sample}.dmnd.csv", sample=lambda wildcards: get_fasta_samples_orthofinder()),
+		expand("results_annotation/clusters/all/broccoli/dmnd_mcl/{sample}.dmnd.csv", sample=lambda wildcards: get_fasta_samples_broccoli())
 
 # INITIAL ORTHOLOGY
 
-if config["workflow_control"]["broccoli"] == "TRUE":
+if config["ww_cl"]["broccoli"] == "TRUE":
 	print("Running INITIAL ORTHOLOGY with Broccoli")
 	checkpoint broccoli:
 		input:
 			config["input_dir"]
 		output:
-			directory("results_annotation/broccoli/orthologous_groups_fastas"),
+			directory("results_annotation/broccoli/Orthogroup_Sequences"),
 			"results_annotation/broccoli/dir_step3/orthologous_groups.txt",
 			"results_annotation/broccoli/dir_step4/orthologous_pairs.txt"
 		params:
@@ -66,10 +91,10 @@ if config["workflow_control"]["broccoli"] == "TRUE":
 			python workflow/scripts/parse_fastas_broccoli.py \
 				-b results_annotation/broccoli/dir_step3/orthologous_groups.txt \
 				-f {input} \
-				-o results_annotation/broccoli/orthologous_groups_fastas
+				-o results_annotation/broccoli/Orthogroup_Sequences
 			"""
 
-if config["workflow_control"]["orthofinder"] == "TRUE":
+if config["ww_cl"]["orthofinder"] == "TRUE":
 	print("Running INITIAL ORTHOLOGY with OrthoFinder")
 	checkpoint orthofinder:
 		input:
@@ -105,7 +130,7 @@ if config["workflow_control"]["orthofinder"] == "TRUE":
 # SEARCH
 
 ## HMM search for orthofinder
-if config["workflow_control"]["search"] == "TRUE" and config["workflow_control"]["orthofinder"] == "TRUE":
+if config["ww_cl"]["search"] == "TRUE" and config["ww_cl"]["orthofinder"] == "TRUE":
 	print("Running SEARCH with hmmsearch against your hmms of interest for OrthoFinder results")
 	rule search_orthofinder:
 		input:
@@ -124,18 +149,25 @@ if config["workflow_control"]["search"] == "TRUE" and config["workflow_control"]
 			python workflow/scripts/s01_search.py -f {input} -g {params.gene_family_info} -t {threads} {params.gene_family_name} -H {params.hmm_dir} -i {params.input_source} &&
 			touch {output}
 			"""
+	
+	checkpoint search_orthofinder_ckpt:
+		input:
+			"results_annotation/OrthoFinder/Orthogroup_Sequences"
+		output:
+			directory("results_annotation/searches/OrthoFinder")
+
 else: 
 	print("hmm search step SKIPPED for OrthoFinder")
 
 ## HMM search for broccoli
 
-if config["workflow_control"]["search"] == "TRUE" and config["workflow_control"]["broccoli"] == "TRUE":
+if config["ww_cl"]["search"] == "TRUE" and config["ww_cl"]["broccoli"] == "TRUE":
 	print("Running SEARCH with hmmsearch against your hmms of interest for broccoli results")
 	rule search_broccoli:
 		input:
-			"results_annotation/broccoli/orthologous_groups_fastas/{sample}.fa"
+			"results_annotation/broccoli/Orthogroup_Sequences/{sample}.fa"
 		output:
-			"results_annotation/broccoli/orthologous_groups_fastas/{sample}.txt"
+			"results_annotation/broccoli/Orthogroup_Sequences/{sample}.txt"
 		params:
 			gene_family_info=config["search"]["gene_family_info"],
 			gene_family_name=config["search"]["gene_family_name"],
@@ -148,50 +180,129 @@ if config["workflow_control"]["search"] == "TRUE" and config["workflow_control"]
 			python workflow/scripts/s01_search.py -f {input} -g {params.gene_family_info} -t {threads} {params.gene_family_name} -H {params.hmm_dir} -i {params.input_source} &&
 			touch {output}
 			"""
+
+	checkpoint search_broccoli_ckpt:
+		input:
+			"results_annotation/broccoli/Orthogroup_Sequences"
+		output:
+			directory("results_annotation/searches/broccoli")
+
 else: 
 	print("hmm search step SKIPPED for broccoli")
 
 # CLUSTER
 
-if config["workflow_control"]["diamond_mcl"] == "TRUE":
-	print("Running clustering using diamond and MCL")
-	if config["workflow_control"]["search"] == "TRUE":
-		if config["workflow_control"]["broccoli"] == "TRUE":
-			rule cluster_diamond_mcl_broccoli:
+if config["ww_cl"]["diamond_mcl"] == "TRUE":
+	print("Running CLUSTER using diamond and MCL")
+	if config["ww_cl"]["search"] == "TRUE": # when SEARCH is enabled
+		print("Running CLUSTER on outputs of SEARCH")
+		if config["ww_cl"]["broccoli"] == "TRUE":
+			rule cluster_diamond_mcl_broccoli_search:
 				input:
-					"results_annotation/searches/broccoli/{sample}.domains.fasta"
+					"results_annotation/searches/broccoli/{unique_sample_name}.domains.fasta"
 				output:
-					"results_annotation/clusters/broccoli/{sample}.domains.abc"
+					"results_annotation/clusters/searches/broccoli/dmnd_mcl/{unique_sample_name}.domains.dmnd.csv"
 				params:
 					diamond_params=config["cluster_diamond_mcl"]["diamond_params"],
 					mcl_params=config["cluster_diamond_mcl"]["mcl_params"],
-					mcl_inflation=config["cluster_diamond_mcl"]["mcl_inflation"]
+					mcl_inflation=config["cluster_diamond_mcl"]["mcl_inflation"],
+
+					mcl_fasta_outdir="results_annotation/clusters/searches/broccoli/dmnd_mcl"
 				conda:
 					"../envs/search_cluster.yaml"
 				shell:
 					"""
-					diamond blastp {params.diamond_params} -d {input}  -q {input} -o {input}.csv --threads {threads} &&
-					awk '{{ print $1,$2,$12 }}' {input}.csv > {input}.csv.tmp &&
-					mv {input}.csv.tmp {input}.csv &&
-					mcl {input}.csv {params.mcl_params} -I {mcl_inflation} -o {output}
+					diamond blastp {params.diamond_params} -d {input} -q {input} -o {output} --threads {threads} &&
+					awk '{{ print $1,$2,$12 }}' {output} > {output}.tmp &&
+					mv {output}.tmp {output} &&
+					mcl {output} {params.mcl_params} -I {params.mcl_inflation} -o {output}.abc &&
+
+					python workflow/scripts/parse_fastas_mcl.py \
+						-m {output}.abc \
+						-f {input} \
+						-o {params.mcl_fasta_outdir}
 					"""
-		if config["workflow_control"]["orthofinder"] == "TRUE":
-			rule cluster_diamond_mcl_orthofinder:
+		if config["ww_cl"]["orthofinder"] == "TRUE":
+			rule cluster_diamond_mcl_orthofinder_search:
 				input:
-					"results_annotation/searches/OrthoFinder/{sample}.domains.fasta"
+					"results_annotation/searches/OrthoFinder/{unique_sample_name}.domains.fasta"
 				output:
-					"results_annotation/clusters/OrthoFinder/{sample}.domains.abc"
+					"results_annotation/clusters/searches/OrthoFinder/dmnd_mcl/{unique_sample_name}.domains.dmnd.csv"
 				params:
 					diamond_params=config["cluster_diamond_mcl"]["diamond_params"],
 					mcl_params=config["cluster_diamond_mcl"]["mcl_params"],
-					mcl_inflation=config["cluster_diamond_mcl"]["mcl_inflation"]
+					mcl_inflation=config["cluster_diamond_mcl"]["mcl_inflation"],
+
+					mcl_fasta_outdir="results_annotation/clusters/searches/OrthoFinder/dmnd_mcl"
 				conda:
 					"../envs/search_cluster.yaml"
 				shell:
 					"""
-					diamond blastp {params.diamond_params} -d {input}  -q {input} -o {input}.csv --threads {threads} &&
-					awk '{{ print $1,$2,$12 }}' {input}.csv > {input}.csv.tmp &&
-					mv {input}.csv.tmp {input}.csv &&
-					mcl {input}.csv {params.mcl_params} -I {mcl_inflation} -o {output}
+					diamond blastp {params.diamond_params} -d {input} -q {input} -o {output} --threads {threads} &&
+					awk '{{ print $1,$2,$12 }}' {output} > {output}.tmp &&
+					mv {output}.tmp {output} &&
+					mcl {output} {params.mcl_params} -I {params.mcl_inflation} -o {output}.abc &&
+
+					python workflow/scripts/parse_fastas_mcl.py \
+						-m {output}.abc \
+						-f {input} \
+						-o {params.mcl_fasta_outdir}
 					"""
+	if config["ww_cl"]["downstream_all"] == "TRUE": # if true, then also run cluster, etc on all the orthogroups
+		print("Running CLUSTER on all orthogroups identified")
+		if config["ww_cl"]["broccoli"] == "TRUE":
+			rule cluster_diamond_mcl_broccoli_all:
+				input:
+					"results_annotation/broccoli/Orthogroup_Sequences/{sample}.fa"
+				output:
+					"results_annotation/clusters/all/broccoli/dmnd_mcl/{sample}.dmnd.csv"
+				params:
+					diamond_params=config["cluster_diamond_mcl"]["diamond_params"],
+					mcl_params=config["cluster_diamond_mcl"]["mcl_params"],
+					mcl_inflation=config["cluster_diamond_mcl"]["mcl_inflation"],
+
+					mcl_fasta_outdir="results_annotation/clusters/all/broccoli/dmnd_mcl"
+				conda:
+					"../envs/search_cluster.yaml"
+				shell:
+					"""
+					diamond blastp {params.diamond_params} -d {input} -q {input} -o {output} --threads {threads} &&
+					awk '{{ print $1,$2,$12 }}' {output} > {output}.tmp &&
+					mv {output}.tmp {output} &&
+					mcl {output} {params.mcl_params} -I {params.mcl_inflation} -o {output}.abc &&
+
+					python workflow/scripts/parse_fastas_mcl.py \
+						-m {output}.abc \
+						-f {input} \
+						-o {params.mcl_fasta_outdir}
+					"""
+		if config["ww_cl"]["orthofinder"] == "TRUE":
+			rule cluster_diamond_mcl_orthofinder_all:
+				input:
+					"results_annotation/OrthoFinder/Orthogroup_Sequences/{sample}.fa"
+				output:
+					"results_annotation/clusters/all/OrthoFinder/dmnd_mcl/{sample}.dmnd.csv"
+				params:
+					diamond_params=config["cluster_diamond_mcl"]["diamond_params"],
+					mcl_params=config["cluster_diamond_mcl"]["mcl_params"],
+					mcl_inflation=config["cluster_diamond_mcl"]["mcl_inflation"],
+
+					mcl_fasta_outdir="results_annotation/clusters/all/OrthoFinder/dmnd_mcl"
+				conda:
+					"../envs/search_cluster.yaml"
+				shell:
+					"""
+					diamond blastp {params.diamond_params} -d {input} -q {input} -o {output} --threads {threads} &&
+					awk '{{ print $1,$2,$12 }}' {output} > {output}.tmp &&
+					mv {output}.tmp {output} &&
+					mcl {output} {params.mcl_params} -I {params.mcl_inflation} -o {output}.abc &&
+
+					python workflow/scripts/parse_fastas_mcl.py \
+						-m {output}.abc \
+						-f {input} \
+						-o {params.mcl_fasta_outdir}
+					"""
+
+
+
 

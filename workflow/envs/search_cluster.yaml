@@ -12,3 +12,4 @@ dependencies:
   - diamond
   - mcl
   - seqkit
+  - biopython

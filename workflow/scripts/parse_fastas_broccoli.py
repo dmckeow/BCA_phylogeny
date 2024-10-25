@@ -2,6 +2,7 @@ import os
 import argparse
 from Bio import SeqIO
 
+
 def extract_fasta_sequences(og_file, fasta_dir, output_dir):
 	# Read the OG to protein names mapping from the input file
 	with open(og_file, "r") as og:
@@ -37,4 +38,5 @@ if __name__ == "__main__":
 
 	os.makedirs(args.outdir, exist_ok=True)
 
+	# Just extract using Broccoli's dir_step3/orthologous_groups.txt to make fastas for OGs which Broccoli should ALREADY FUCKING DO
 	extract_fasta_sequences(args.broccoli_ogs, args.fasta, args.outdir)

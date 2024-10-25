@@ -6,9 +6,9 @@ import argparse
 import logging
 import yaml
 from helper.s02_cluster import cluster
-from helper.functions import align_and_trim
-from helper.functions import phylogeny
-from helper.functions import possvm
+from workflow.scripts.functions import align_and_trim
+from workflow.scripts.functions import phylogeny
+from workflow.scripts.functions import possvm
 
 # Ensure PyYAML is installed
 try:
