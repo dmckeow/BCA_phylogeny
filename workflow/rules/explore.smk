@@ -41,6 +41,8 @@ def get_broccoli_domains_files():
 	domain_files = glob_wildcards(os.path.join(ckpt_output, "{unique_sample_name}.domains.fasta")).unique_sample_name
 	return domain_files
 
+work_dir = os.getcwd() # get the directory snakemake run from
+
 # RULES BEGIN
 
 rule all:
@@ -77,18 +79,21 @@ if config["ww_cl"]["broccoli"] == "TRUE":
 			f"{config["output_dir"]}/broccoli/dir_step4/orthologous_pairs.txt"
 		params:
 			tool_params=config["broccoli"]["broccoli_params"],
-			output_dir=config["output_dir"]
+			output_dir=config["output_dir"],
+			work_dir=work_dir
 		conda:
 			"../envs/initial_ortho.yaml"
 		shell:
 			"""
 			rm -fr {params.output_dir}/broccoli &&
 			mkdir -p {params.output_dir}/broccoli &&
-			python Broccoli/broccoli.py -dir {input} -threads {threads} {params.tool_params} &&
-			mv dir_step1 {params.output_dir}/broccoli &&
-			mv dir_step2 {params.output_dir}/broccoli &&
-			mv dir_step3 {params.output_dir}/broccoli &&
-			mv dir_step4 {params.output_dir}/broccoli &&
+			cd {params.output_dir}/broccoli &&
+			python {params.work_dir}/Broccoli/broccoli.py -threads {threads} -dir {input} {params.tool_params} &&
+			#mv dir_step1 {params.output_dir}/broccoli &&
+			#mv dir_step2 {params.output_dir}/broccoli &&
+			#mv dir_step3 {params.output_dir}/broccoli &&
+			#mv dir_step4 {params.output_dir}/broccoli &&
+			cd {params.work_dir}/broccoli &&
 			python workflow/scripts/parse_fastas_broccoli.py \
 				-b {params.output_dir}/broccoli/dir_step3/orthologous_groups.txt \
 				-f {input} \

@@ -14,7 +14,7 @@ ww_cl: # workflow_control
   ## SEARCH
     # You must enable at least ONE
   search: "TRUE" # runs hmmsearch against gene families and hmm profiles specified by YOU in WORKFLOW PARAMETERS
-  downstream_all: "TRUE" # if TRUE then ALL orthogroups identified by INITIAL ORTHOLOGY will be subject to downstream analyses
+  downstream_all: "false" # if TRUE then ALL orthogroups identified by INITIAL ORTHOLOGY will be subject to downstream analyses
 
   ## CLUSTER
   diamond_mcl: "TRUE"
@@ -23,12 +23,12 @@ ww_cl: # workflow_control
 
   # WHOLE WORKFLOW
     # Toy data:
-#input_dir: "Broccoli/example_dataset" # path to directory (relative or absolute) containing protein fastas
-#output_dir: "results/toy" # path to directory in which all results will be stored
+input_dir: "Broccoli/example_dataset" # path to directory (relative or absolute) containing protein fastas
+output_dir: "results/toy" # path to directory in which all results will be stored
 
     # Test data:
-input_dir: "data/input"
-output_dir: "results/test" # path to directory in which all results will be stored
+#input_dir: "data/input"
+#output_dir: "results/test" # path to directory in which all results will be stored
 
   # INITAL ORTHOLOGY
 
@@ -42,14 +42,14 @@ orthofinder:
 
 search:
   # Toy data:
-  #gene_family_info: data/genefam.tsv
-  #gene_family_name: Myosin
-  #hmm_dir: data/hmms
+  gene_family_info: data/genefam.tsv
+  gene_family_name: Myosin
+  hmm_dir: data/hmms
 
   # Test data:
-  gene_family_info: /users/asebe/gzolotarov/projects/2021_TFevol/metazoan_tf_evol_2022/results_phylogenies/gene_families_searchinfo.csv
-  gene_family_name: Myosin
-  hmm_dir: /users/asebe/gzolotarov/projects/2021_TFevol/metazoan_tf_evol_2022/results_phylogenies/hmms
+  #gene_family_info: /users/asebe/gzolotarov/projects/2021_TFevol/metazoan_tf_evol_2022/results_phylogenies/gene_families_searchinfo.csv
+  #gene_family_name: Myosin
+  #hmm_dir: /users/asebe/gzolotarov/projects/2021_TFevol/metazoan_tf_evol_2022/results_phylogenies/hmms
 
   # CLUSTER
 

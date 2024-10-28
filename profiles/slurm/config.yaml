@@ -13,15 +13,15 @@ cluster-generic-submit-cmd:
 default-resources: # anything that is not an integer must be double & single quoted e.g. "'64partition'" "'important-thing_69'"
         account: "'dmckeown'"
         paritition: "'genoa64'"
-        qos: "'long'"
-        time: "'01-00:00:00'"
-        mem_mb: 48000
-        threads: 8
+        qos: "'normal'"
+        time: "'00-12:00:00'"
+        mem_mb: 16000
+        threads: 4
 restart-times: 0
 max-jobs-per-second: 10
 max-status-checks-per-second: 1
 local-cores: 1
-latency-wait: 86400
+latency-wait: 172800
 jobs: 1000
 keep-going: True
 rerun-incomplete: True
@@ -31,6 +31,16 @@ use-conda: True
 
 # SET SPECIFIC RESOURCES FOR SPECIFIC RULES
 set-resources:
+    orthofinder:
+        qos: "'vlong'"
+        time: "'00-02:00:00'"
+        mem_mb: 72000
+        threads: 8
+    broccoli:
+        qos: "'vlong'"
+        time: "'00-02:00:00'"
+        mem_mb: 72000
+        threads: 8
     search_orthofinder:
         qos: "'vshort'"
         time: "'00-01:00:00'"
