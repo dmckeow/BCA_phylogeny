@@ -20,9 +20,17 @@ ww_cl: # workflow_control
   diamond_mcl: "TRUE"
 
 # WORKFLOW PARAMETERS
-  # INITAL ORTHOLOGY
 
-input_dir: "Broccoli/example_dataset" # path to directory (relative or absolute) containing protein fastas
+  # WHOLE WORKFLOW
+    # Toy data:
+#input_dir: "Broccoli/example_dataset" # path to directory (relative or absolute) containing protein fastas
+#output_dir: "results/toy" # path to directory in which all results will be stored
+
+    # Test data:
+input_dir: "data/input"
+output_dir: "results/test" # path to directory in which all results will be stored
+
+  # INITAL ORTHOLOGY
 
 broccoli:
   broccoli_params: "-kmer_size 10000 -phylogenies ml"
@@ -33,9 +41,15 @@ orthofinder:
   # SEARCH
 
 search:
-  gene_family_info: data/genefam.tsv
+  # Toy data:
+  #gene_family_info: data/genefam.tsv
+  #gene_family_name: Myosin
+  #hmm_dir: data/hmms
+
+  # Test data:
+  gene_family_info: /users/asebe/gzolotarov/projects/2021_TFevol/metazoan_tf_evol_2022/results_phylogenies/gene_families_searchinfo.csv
   gene_family_name: Myosin
-  hmm_dir: data/hmms
+  hmm_dir: /users/asebe/gzolotarov/projects/2021_TFevol/metazoan_tf_evol_2022/results_phylogenies/hmms
 
   # CLUSTER
 

@@ -15,7 +15,7 @@ if config["ww_cl"]["broccoli"] != "TRUE" and config["ww_cl"]["orthofinder"] != "
 #def get_fasta_files(wildcards):
 #	ckpt_output = checkpoints.orthofinder.get().output[0]  # Retrieve the checkpoint output
 #	fasta_files = glob_wildcards(os.path.join(ckpt_output, "{sample}.fa")).sample
-#	return expand("results_annotation/OrthoFinder/Orthogroup_Sequences/{sample}.fa", sample=fasta_files)
+#	return expand("{config['output_dir']}/OrthoFinder/Orthogroup_Sequences/{sample}.fa", sample=fasta_files)
 
 def get_fasta_samples_orthofinder():
 	ckpt_output = checkpoints.orthofinder.get().output[0]  # Get the checkpoint output directory
@@ -45,24 +45,24 @@ def get_broccoli_domains_files():
 
 rule all:
 	input:
-		"results_annotation/broccoli/dir_step3/orthologous_groups.txt",
-		"results_annotation/broccoli/dir_step4/orthologous_pairs.txt",
-		"results_annotation/OrthoFinder/Orthogroup_Sequences",
-		"results_annotation/broccoli/Orthogroup_Sequences",
-		#expand("results_annotation/OrthoFinder/test/{sample}.fa", sample=get_fasta_files) # to aggregate
-		expand("results_annotation/OrthoFinder/Orthogroup_Sequences/{sample}.txt", sample=lambda wildcards: get_fasta_samples_orthofinder()),
-		expand("results_annotation/broccoli/Orthogroup_Sequences/{sample}.txt", sample=lambda wildcards: get_fasta_samples_broccoli()),
+		f"{config["output_dir"]}/broccoli/dir_step3/orthologous_groups.txt",
+		f"{config["output_dir"]}/broccoli/dir_step4/orthologous_pairs.txt",
+		f"{config["output_dir"]}/OrthoFinder/Orthogroup_Sequences",
+		f"{config["output_dir"]}/broccoli/Orthogroup_Sequences",
+		#expand("{config["output_dir"]}/OrthoFinder/test/{sample}.fa", sample=get_fasta_files) # to aggregate
+		expand(f"{config["output_dir"]}/OrthoFinder/Orthogroup_Sequences/{{sample}}.txt", sample=lambda wildcards: get_fasta_samples_orthofinder()),
+		expand(f"{config["output_dir"]}/broccoli/Orthogroup_Sequences/{{sample}}.txt", sample=lambda wildcards: get_fasta_samples_broccoli()),
 
 		# CLUSTER OUTPUTS:
 			# diamond mcl
-		expand("results_annotation/searches/OrthoFinder/{unique_sample_name}.domains.fasta", unique_sample_name=lambda wildcards: get_orthofinder_domains_files()),
-		expand("results_annotation/clusters/searches/OrthoFinder/dmnd_mcl/{unique_sample_name}.domains.dmnd.csv", unique_sample_name=lambda wildcards: get_orthofinder_domains_files()),
+		expand(f"{config["output_dir"]}/searches/OrthoFinder/{{unique_sample_name}}.domains.fasta", unique_sample_name=lambda wildcards: get_orthofinder_domains_files()),
+		expand(f"{config["output_dir"]}/clusters/searches/OrthoFinder/dmnd_mcl/{{unique_sample_name}}.domains.dmnd.csv", unique_sample_name=lambda wildcards: get_orthofinder_domains_files()),
 		
-		expand("results_annotation/searches/broccoli/{unique_sample_name}.domains.fasta", unique_sample_name=lambda wildcards: get_broccoli_domains_files()),
-		expand("results_annotation/clusters/searches/broccoli/dmnd_mcl/{unique_sample_name}.domains.dmnd.csv", unique_sample_name=lambda wildcards: get_broccoli_domains_files()),
+		expand(f"{config["output_dir"]}/searches/broccoli/{{unique_sample_name}}.domains.fasta", unique_sample_name=lambda wildcards: get_broccoli_domains_files()),
+		expand(f"{config["output_dir"]}/clusters/searches/broccoli/dmnd_mcl/{{unique_sample_name}}.domains.dmnd.csv", unique_sample_name=lambda wildcards: get_broccoli_domains_files()),
 
-		expand("results_annotation/clusters/all/OrthoFinder/dmnd_mcl/{sample}.dmnd.csv", sample=lambda wildcards: get_fasta_samples_orthofinder()),
-		expand("results_annotation/clusters/all/broccoli/dmnd_mcl/{sample}.dmnd.csv", sample=lambda wildcards: get_fasta_samples_broccoli())
+		expand(f"{config["output_dir"]}/clusters/all/OrthoFinder/dmnd_mcl/{{sample}}.dmnd.csv", sample=lambda wildcards: get_fasta_samples_orthofinder()),
+		expand(f"{config["output_dir"]}/clusters/all/broccoli/dmnd_mcl/{{sample}}.dmnd.csv", sample=lambda wildcards: get_fasta_samples_broccoli())
 
 # INITIAL ORTHOLOGY
 
@@ -72,26 +72,27 @@ if config["ww_cl"]["broccoli"] == "TRUE":
 		input:
 			config["input_dir"]
 		output:
-			directory("results_annotation/broccoli/Orthogroup_Sequences"),
-			"results_annotation/broccoli/dir_step3/orthologous_groups.txt",
-			"results_annotation/broccoli/dir_step4/orthologous_pairs.txt"
+			directory(f"{config["output_dir"]}/broccoli/Orthogroup_Sequences"),
+			f"{config["output_dir"]}/broccoli/dir_step3/orthologous_groups.txt",
+			f"{config["output_dir"]}/broccoli/dir_step4/orthologous_pairs.txt"
 		params:
-			tool_params=config["broccoli"]["broccoli_params"]
+			tool_params=config["broccoli"]["broccoli_params"],
+			output_dir=config["output_dir"]
 		conda:
 			"../envs/initial_ortho.yaml"
 		shell:
 			"""
-			rm -fr results_annotation/broccoli &&
-			mkdir -p results_annotation/broccoli &&
+			rm -fr {params.output_dir}/broccoli &&
+			mkdir -p {params.output_dir}/broccoli &&
 			python Broccoli/broccoli.py -dir {input} -threads {threads} {params.tool_params} &&
-			mv dir_step1 results_annotation/broccoli &&
-			mv dir_step2 results_annotation/broccoli &&
-			mv dir_step3 results_annotation/broccoli &&
-			mv dir_step4 results_annotation/broccoli &&
+			mv dir_step1 {params.output_dir}/broccoli &&
+			mv dir_step2 {params.output_dir}/broccoli &&
+			mv dir_step3 {params.output_dir}/broccoli &&
+			mv dir_step4 {params.output_dir}/broccoli &&
 			python workflow/scripts/parse_fastas_broccoli.py \
-				-b results_annotation/broccoli/dir_step3/orthologous_groups.txt \
+				-b {params.output_dir}/broccoli/dir_step3/orthologous_groups.txt \
 				-f {input} \
-				-o results_annotation/broccoli/Orthogroup_Sequences
+				-o {params.output_dir}/broccoli/Orthogroup_Sequences
 			"""
 
 if config["ww_cl"]["orthofinder"] == "TRUE":
@@ -100,18 +101,19 @@ if config["ww_cl"]["orthofinder"] == "TRUE":
 		input:
 			config["input_dir"]
 		output:
-			directory("results_annotation/OrthoFinder/Orthogroup_Sequences")
+			directory(f"{config['output_dir']}/OrthoFinder/Orthogroup_Sequences")
 		params:
-			tool_params=config["orthofinder"]["orthofinder_params"]
+			tool_params=config["orthofinder"]["orthofinder_params"],
+			output_dir=config["output_dir"]
 		conda:
 			"../envs/initial_ortho.yaml"
 		shell:
 			"""
-			rm -fr results_annotation/OrthoFinder_tmp &&
-			rm -fr results_annotation/OrthoFinder &&
-			orthofinder -n OrthoFinder -f {input} -o results_annotation/OrthoFinder_tmp -t {threads} {params.tool_params} &&
-			mv results_annotation/OrthoFinder_tmp/Results_OrthoFinder results_annotation/OrthoFinder &&
-			rm -fr results_annotation/OrthoFinder_tmp
+			rm -fr {params.output_dir}/OrthoFinder_tmp &&
+			rm -fr {params.output_dir}/OrthoFinder &&
+			orthofinder -n OrthoFinder -f {input} -o {params.output_dir}/OrthoFinder_tmp -t {threads} {params.tool_params} &&
+			mv {params.output_dir}/OrthoFinder_tmp/Results_OrthoFinder {params.output_dir}/OrthoFinder &&
+			rm -fr {params.output_dir}/OrthoFinder_tmp
 			"""
 
 
@@ -120,9 +122,9 @@ if config["ww_cl"]["orthofinder"] == "TRUE":
 #rule intermediate:
 #	input:
 		#get_fasta_files # to aggregate
-#		"results_annotation/OrthoFinder/Orthogroup_Sequences/{sample}.fa"
+#		"{config['output_dir']}/OrthoFinder/Orthogroup_Sequences/{sample}.fa"
 #	output:
-#		"results_annotation/OrthoFinder/test/{sample}.fa"
+#		"{config['output_dir']}/OrthoFinder/test/{sample}.fa"
 #	shell:
 #		"cp {input} {output}"
 
@@ -134,27 +136,28 @@ if config["ww_cl"]["search"] == "TRUE" and config["ww_cl"]["orthofinder"] == "TR
 	print("Running SEARCH with hmmsearch against your hmms of interest for OrthoFinder results")
 	rule search_orthofinder:
 		input:
-			"results_annotation/OrthoFinder/Orthogroup_Sequences/{sample}.fa"
+			f"{config['output_dir']}/OrthoFinder/Orthogroup_Sequences/{{sample}}.fa"
 		output:
-			"results_annotation/OrthoFinder/Orthogroup_Sequences/{sample}.txt"
+			f"{config['output_dir']}/OrthoFinder/Orthogroup_Sequences/{{sample}}.txt"
 		params:
 			gene_family_info=config["search"]["gene_family_info"],
 			gene_family_name=config["search"]["gene_family_name"],
 			hmm_dir=config["search"]["hmm_dir"],
-			input_source="OrthoFinder"
+			input_source="OrthoFinder",
+			output_dir=config["output_dir"]
 		conda:
 			"../envs/search_cluster.yaml"
 		shell:
 			"""
-			python workflow/scripts/s01_search.py -f {input} -g {params.gene_family_info} -t {threads} {params.gene_family_name} -H {params.hmm_dir} -i {params.input_source} &&
+			python workflow/scripts/s01_search.py -f {input} -g {params.gene_family_info} -t {threads} {params.gene_family_name} -H {params.hmm_dir} -i {params.input_source} -o {params.output_dir}/searches &&
 			touch {output}
 			"""
 	
 	checkpoint search_orthofinder_ckpt:
 		input:
-			"results_annotation/OrthoFinder/Orthogroup_Sequences"
+			f"{config['output_dir']}/OrthoFinder/Orthogroup_Sequences"
 		output:
-			directory("results_annotation/searches/OrthoFinder")
+			directory(f"{config['output_dir']}/searches/OrthoFinder")
 
 else: 
 	print("hmm search step SKIPPED for OrthoFinder")
@@ -165,27 +168,28 @@ if config["ww_cl"]["search"] == "TRUE" and config["ww_cl"]["broccoli"] == "TRUE"
 	print("Running SEARCH with hmmsearch against your hmms of interest for broccoli results")
 	rule search_broccoli:
 		input:
-			"results_annotation/broccoli/Orthogroup_Sequences/{sample}.fa"
+			f"{config['output_dir']}/broccoli/Orthogroup_Sequences/{{sample}}.fa"
 		output:
-			"results_annotation/broccoli/Orthogroup_Sequences/{sample}.txt"
+			f"{config['output_dir']}/broccoli/Orthogroup_Sequences/{{sample}}.txt"
 		params:
 			gene_family_info=config["search"]["gene_family_info"],
 			gene_family_name=config["search"]["gene_family_name"],
 			hmm_dir=config["search"]["hmm_dir"],
-			input_source="broccoli"
+			input_source="broccoli",
+			output_dir=config["output_dir"]
 		conda:
 			"../envs/search_cluster.yaml"
 		shell:
 			"""
-			python workflow/scripts/s01_search.py -f {input} -g {params.gene_family_info} -t {threads} {params.gene_family_name} -H {params.hmm_dir} -i {params.input_source} &&
+			python workflow/scripts/s01_search.py -f {input} -g {params.gene_family_info} -t {threads} {params.gene_family_name} -H {params.hmm_dir} -i {params.input_source} -o {params.output_dir}/searches &&
 			touch {output}
 			"""
 
 	checkpoint search_broccoli_ckpt:
 		input:
-			"results_annotation/broccoli/Orthogroup_Sequences"
+			f"{config['output_dir']}/broccoli/Orthogroup_Sequences"
 		output:
-			directory("results_annotation/searches/broccoli")
+			directory(f"{config['output_dir']}/searches/broccoli")
 
 else: 
 	print("hmm search step SKIPPED for broccoli")
@@ -199,15 +203,15 @@ if config["ww_cl"]["diamond_mcl"] == "TRUE":
 		if config["ww_cl"]["broccoli"] == "TRUE":
 			rule cluster_diamond_mcl_broccoli_search:
 				input:
-					"results_annotation/searches/broccoli/{unique_sample_name}.domains.fasta"
+					f"{config['output_dir']}/searches/broccoli/{{unique_sample_name}}.domains.fasta"
 				output:
-					"results_annotation/clusters/searches/broccoli/dmnd_mcl/{unique_sample_name}.domains.dmnd.csv"
+					f"{config['output_dir']}/clusters/searches/broccoli/dmnd_mcl/{{unique_sample_name}}.domains.dmnd.csv"
 				params:
 					diamond_params=config["cluster_diamond_mcl"]["diamond_params"],
 					mcl_params=config["cluster_diamond_mcl"]["mcl_params"],
 					mcl_inflation=config["cluster_diamond_mcl"]["mcl_inflation"],
 
-					mcl_fasta_outdir="results_annotation/clusters/searches/broccoli/dmnd_mcl"
+					mcl_fasta_outdir=f"{config['output_dir']}/clusters/searches/broccoli/dmnd_mcl"
 				conda:
 					"../envs/search_cluster.yaml"
 				shell:
@@ -225,15 +229,15 @@ if config["ww_cl"]["diamond_mcl"] == "TRUE":
 		if config["ww_cl"]["orthofinder"] == "TRUE":
 			rule cluster_diamond_mcl_orthofinder_search:
 				input:
-					"results_annotation/searches/OrthoFinder/{unique_sample_name}.domains.fasta"
+					f"{config['output_dir']}/searches/OrthoFinder/{{unique_sample_name}}.domains.fasta"
 				output:
-					"results_annotation/clusters/searches/OrthoFinder/dmnd_mcl/{unique_sample_name}.domains.dmnd.csv"
+					f"{config['output_dir']}/clusters/searches/OrthoFinder/dmnd_mcl/{{unique_sample_name}}.domains.dmnd.csv"
 				params:
 					diamond_params=config["cluster_diamond_mcl"]["diamond_params"],
 					mcl_params=config["cluster_diamond_mcl"]["mcl_params"],
 					mcl_inflation=config["cluster_diamond_mcl"]["mcl_inflation"],
 
-					mcl_fasta_outdir="results_annotation/clusters/searches/OrthoFinder/dmnd_mcl"
+					mcl_fasta_outdir=f"{config['output_dir']}/clusters/searches/OrthoFinder/dmnd_mcl"
 				conda:
 					"../envs/search_cluster.yaml"
 				shell:
@@ -253,15 +257,15 @@ if config["ww_cl"]["diamond_mcl"] == "TRUE":
 		if config["ww_cl"]["broccoli"] == "TRUE":
 			rule cluster_diamond_mcl_broccoli_all:
 				input:
-					"results_annotation/broccoli/Orthogroup_Sequences/{sample}.fa"
+					f"{config['output_dir']}/broccoli/Orthogroup_Sequences/{{sample}}.fa"
 				output:
-					"results_annotation/clusters/all/broccoli/dmnd_mcl/{sample}.dmnd.csv"
+					f"{config['output_dir']}/clusters/all/broccoli/dmnd_mcl/{{sample}}.dmnd.csv"
 				params:
 					diamond_params=config["cluster_diamond_mcl"]["diamond_params"],
 					mcl_params=config["cluster_diamond_mcl"]["mcl_params"],
 					mcl_inflation=config["cluster_diamond_mcl"]["mcl_inflation"],
 
-					mcl_fasta_outdir="results_annotation/clusters/all/broccoli/dmnd_mcl"
+					mcl_fasta_outdir=f"{config['output_dir']}/clusters/all/broccoli/dmnd_mcl"
 				conda:
 					"../envs/search_cluster.yaml"
 				shell:
@@ -279,15 +283,15 @@ if config["ww_cl"]["diamond_mcl"] == "TRUE":
 		if config["ww_cl"]["orthofinder"] == "TRUE":
 			rule cluster_diamond_mcl_orthofinder_all:
 				input:
-					"results_annotation/OrthoFinder/Orthogroup_Sequences/{sample}.fa"
+					f"{config['output_dir']}/OrthoFinder/Orthogroup_Sequences/{{sample}}.fa"
 				output:
-					"results_annotation/clusters/all/OrthoFinder/dmnd_mcl/{sample}.dmnd.csv"
+					f"{config['output_dir']}/clusters/all/OrthoFinder/dmnd_mcl/{{sample}}.dmnd.csv"
 				params:
 					diamond_params=config["cluster_diamond_mcl"]["diamond_params"],
 					mcl_params=config["cluster_diamond_mcl"]["mcl_params"],
 					mcl_inflation=config["cluster_diamond_mcl"]["mcl_inflation"],
 
-					mcl_fasta_outdir="results_annotation/clusters/all/OrthoFinder/dmnd_mcl"
+					mcl_fasta_outdir=f"{config['output_dir']}/clusters/all/OrthoFinder/dmnd_mcl"
 				conda:
 					"../envs/search_cluster.yaml"
 				shell:

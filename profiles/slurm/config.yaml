@@ -13,16 +13,16 @@ cluster-generic-submit-cmd:
 default-resources: # anything that is not an integer must be double & single quoted e.g. "'64partition'" "'important-thing_69'"
         account: "'dmckeown'"
         paritition: "'genoa64'"
-        qos: "'normal'"
-        time: "'00-02:00:00'"
-        mem_mb: 16000
+        qos: "'long'"
+        time: "'01-00:00:00'"
+        mem_mb: 48000
         threads: 8
 restart-times: 0
 max-jobs-per-second: 10
 max-status-checks-per-second: 1
 local-cores: 1
-latency-wait: 600
-jobs: 800
+latency-wait: 86400
+jobs: 1000
 keep-going: True
 rerun-incomplete: True
 printshellcmds: True
@@ -37,6 +37,26 @@ set-resources:
         mem_mb: 8000
         threads: 4
     search_broccoli:
+        qos: "'vshort'"
+        time: "'00-01:00:00'"
+        mem_mb: 8000
+        threads: 4
+    cluster_diamond_mcl_broccoli_search:
+        qos: "'vshort'"
+        time: "'00-01:00:00'"
+        mem_mb: 8000
+        threads: 4
+    cluster_diamond_mcl_orthofinder_search:
+        qos: "'vshort'"
+        time: "'00-01:00:00'"
+        mem_mb: 8000
+        threads: 4
+    cluster_diamond_mcl_broccoli_all:
+        qos: "'vshort'"
+        time: "'00-01:00:00'"
+        mem_mb: 8000
+        threads: 4
+    cluster_diamond_mcl_orthofinder_all:
         qos: "'vshort'"
         time: "'00-01:00:00'"
         mem_mb: 8000

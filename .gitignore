@@ -1,5 +1,6 @@
 helper/__pycache__/*
 data/hmms/*
+data/input/*
 results_annotation/*
 results/*
 logs/*

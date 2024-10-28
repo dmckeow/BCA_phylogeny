@@ -118,7 +118,7 @@ def parse_gene_family_info(gene_family_info):
 			}
 	return gene_families
 
-def search(fasta_file, gene_family_info, gene_family_name, hmm_dir, threads):
+def search(fasta_file, gene_family_info, gene_family_name, hmm_dir, threads, output_dir):
 	logging.info(f"# {fasta_file}: {gene_family_name} | HMM search")
 	gene_families = parse_gene_family_info(gene_family_info)
    # if verbose: 
@@ -143,8 +143,7 @@ def search(fasta_file, gene_family_info, gene_family_name, hmm_dir, threads):
 	hmms = gene_family["hmms"]
 	threshold = gene_family["threshold"]
 
-	searches_dir = 'results_annotation/searches/'
-	searches_dir = os.path.join(searches_dir, f"{args.input_source}/")
+	searches_dir = os.path.join(f"{args.output_dir}/", f"{args.input_source}/")
 	os.makedirs(searches_dir, exist_ok=True)
 	
 	tmp_file = os.path.join(searches_dir, f"{prefix}.{gene_family_name}.domains.csv.tmp")
@@ -182,10 +181,11 @@ if __name__ == "__main__":
 	parser.add_argument('-H', '--hmm', required=True, help='Path to the directory containing hmm profiles against which the search will be performed')
 	parser.add_argument('-t', '--threads', required=True, help='Num cpus for hmmsearch')
 	parser.add_argument('-i', '--input_source', required=True, help='A meaningful name indicating where your input fastas came from - will be used as subdirectory name in results_annotations/searches')
+	parser.add_argument('-o', '--output_dir', required=True, help='Directory for outputs in which a directory <input_source> will be created')
 	parser.add_argument('gene_family_name', help='Name of the gene family to search')
 
 	args = parser.parse_args()
 
 	verbose = True
 
-	search(args.fasta, args.gene_family_info, args.gene_family_name, args.hmm, args.threads)
+	search(args.fasta, args.gene_family_info, args.gene_family_name, args.hmm, args.threads, args.output_dir)
